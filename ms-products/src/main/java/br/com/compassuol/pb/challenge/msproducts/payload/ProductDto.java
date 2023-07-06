@@ -1,14 +1,19 @@
 package br.com.compassuol.pb.challenge.msproducts.payload;
 
 import java.util.Date;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class ProductDto {
 
+	@JsonFormat(pattern="dd-MM-yyyy")
 	private Date date;
 
 	@NotEmpty
@@ -20,6 +25,10 @@ public class ProductDto {
 	private String name;
 	
 	private String imgUrl;
-	@NotEmpty
+	
+	@NotNull
 	private double price;
+	
+	private Set<CategoryDto> categories;
+	
 }

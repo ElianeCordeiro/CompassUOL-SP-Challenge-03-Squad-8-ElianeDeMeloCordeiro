@@ -1,10 +1,18 @@
 package br.com.compassuol.pb.challenge.msproducts.service.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import br.com.compassuol.pb.challenge.msproducts.entities.Category;
 import br.com.compassuol.pb.challenge.msproducts.entities.Product;
+import br.com.compassuol.pb.challenge.msproducts.exceptions.ResourceNotFoundException;
+import br.com.compassuol.pb.challenge.msproducts.payload.CategoryDto;
 import br.com.compassuol.pb.challenge.msproducts.payload.ProductDto;
+import br.com.compassuol.pb.challenge.msproducts.repositories.CategoryRepository;
 import br.com.compassuol.pb.challenge.msproducts.repositories.ProductRepository;
 import br.com.compassuol.pb.challenge.msproducts.service.ProductService;
 
@@ -15,20 +23,77 @@ public class ProductServiceImpl implements ProductService {
 	
 	private ModelMapper mapper;
 	
+	private CategoryRepository categoryRepository;
 
-	public ProductServiceImpl(ProductRepository productRepository, ModelMapper mapper) {
+	public ProductServiceImpl(ProductRepository productRepository,
+							 ModelMapper mapper,
+							 CategoryRepository categoryRepository) {
 		this.productRepository = productRepository;
 		this.mapper = mapper;
+		this.categoryRepository = categoryRepository;
 	}
 
 	@Override
 	public ProductDto createProduct(ProductDto productDto) {
 		
+		Set<Category> categories = new HashSet<>();
+		
+		Set<CategoryDto> categoriesDto =  productDto.getCategories();
+		categoriesDto.forEach(category -> {
+		Category categorySearch = categoryRepository.findById(category.getId())
+					.orElseThrow(() -> new ResourceNotFoundException("Category", "id", category.getId()));
+		categories.add(categorySearch);
+		});
+		
 		Product product = mapToEntity(productDto);
+		product.setCategories(categories);
 		Product savedProduct = productRepository.save(product);
 		
 		ProductDto productResponse = mapToDto(savedProduct);
 		return productResponse;
+	}
+	
+	
+	@Override
+	public List<ProductDto> getAllProducts() {
+	
+		List<Product> products = productRepository.findAll();
+		return products.stream().map(product -> mapToDto(product)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public ProductDto getProductById(long id) {
+		Product product = productRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+		
+		return mapToDto(product);
+	}
+	
+	
+	@Override
+	public ProductDto updateProduct(ProductDto productDto, long id) {
+
+		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+		
+		Product newProduct = mapToEntity(productDto);
+		
+		product.setCategories(newProduct.getCategories());
+		product.setDate(newProduct.getDate());
+		product.setDescription(newProduct.getDescription());
+		product.setName(newProduct.getName());
+		product.setImgUrl(newProduct.getImgUrl());
+		product.setPrice(newProduct.getPrice());
+		
+		Product updatedProduct = productRepository.save(product); 
+		
+		return mapToDto(updatedProduct);
+	}
+	
+	@Override
+	public void deleteProductById(long id) {
+		
+		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+		productRepository.delete(product);
 	}
 
 	private ProductDto mapToDto(Product product) {
@@ -40,4 +105,5 @@ public class ProductServiceImpl implements ProductService {
 		Product product = mapper.map(productDto, Product.class);
 		return product;
 	}
+	
 }
