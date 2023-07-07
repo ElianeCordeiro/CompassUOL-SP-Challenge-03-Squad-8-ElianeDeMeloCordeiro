@@ -1,7 +1,5 @@
 package br.com.compassuol.pb.challenge.msproducts.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,9 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.compassuol.pb.challenge.msproducts.payload.ProductDto;
+import br.com.compassuol.pb.challenge.msproducts.payload.ProductResponse;
 import br.com.compassuol.pb.challenge.msproducts.service.ProductService;
 import jakarta.validation.Valid;
 
@@ -34,13 +34,13 @@ public class ProductController {
 	}
 	
 	@GetMapping
-	public List<ProductDto> getAllProduct(
-//			@RequestParam(value = "page",defaultValue = "0", required = false)int page,
-//			@RequestParam(value = "linesPerPage", defaultValue = "0", required = false) int linesPerPage,
-//			@RequestParam(value = "direction", defaultValue = "ASC", required = false) String direction,
-//			@RequestParam(value = "orderBy", defaultValue = "id", required = false) String orderBy
+	public ProductResponse getAllProduct(
+			@RequestParam(value = "page", defaultValue = "0", required = false)int page,
+			@RequestParam(value = "linesPerPage", defaultValue = "5", required = false) int linesPerPage,
+			@RequestParam(value = "orderBy", defaultValue = "name", required =false) String orderBy,
+			@RequestParam(value = "direction", defaultValue = "asc", required = false) String direction
 	){
-		return productService.getAllProducts();
+		return productService.getAllProducts(page, linesPerPage, orderBy, direction);
 	}
 	
 	@GetMapping("/{id}")

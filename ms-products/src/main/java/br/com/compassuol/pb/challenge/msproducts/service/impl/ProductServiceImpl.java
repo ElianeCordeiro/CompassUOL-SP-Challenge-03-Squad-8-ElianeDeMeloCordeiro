@@ -4,7 +4,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import br.com.compassuol.pb.challenge.msproducts.entities.Category;
@@ -12,6 +17,7 @@ import br.com.compassuol.pb.challenge.msproducts.entities.Product;
 import br.com.compassuol.pb.challenge.msproducts.exceptions.ResourceNotFoundException;
 import br.com.compassuol.pb.challenge.msproducts.payload.CategoryDto;
 import br.com.compassuol.pb.challenge.msproducts.payload.ProductDto;
+import br.com.compassuol.pb.challenge.msproducts.payload.ProductResponse;
 import br.com.compassuol.pb.challenge.msproducts.repositories.CategoryRepository;
 import br.com.compassuol.pb.challenge.msproducts.repositories.ProductRepository;
 import br.com.compassuol.pb.challenge.msproducts.service.ProductService;
@@ -55,10 +61,24 @@ public class ProductServiceImpl implements ProductService {
 	
 	
 	@Override
-	public List<ProductDto> getAllProducts() {
+	public ProductResponse getAllProducts(int pageNo, int linesPerPage, String orderBy, String direction) {
+		
+		Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(orderBy).ascending()
+				: Sort.by(orderBy).descending();
+		Pageable pageable = PageRequest.of(pageNo, linesPerPage, sort);
+		
+		Page<Product> products = productRepository.findAll(pageable);
+		
+		List<Product> listOfProducts = products.getContent();
+		
+		List<ProductDto> content = listOfProducts.stream().map(product -> mapToDto(product)).collect(Collectors.toList());
 	
-		List<Product> products = productRepository.findAll();
-		return products.stream().map(product -> mapToDto(product)).collect(Collectors.toList());
+		ProductResponse productResponse = new ProductResponse();
+		productResponse.setProducts(content);
+		productResponse.setPageNo(products.getNumber());
+		productResponse.setLinesPerPage(products.getSize());
+		
+		return productResponse;
 	}
 	
 	@Override

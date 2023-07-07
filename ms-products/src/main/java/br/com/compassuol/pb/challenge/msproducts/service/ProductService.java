@@ -1,15 +1,13 @@
 package br.com.compassuol.pb.challenge.msproducts.service;
 
-import java.util.List;
-
-
 import br.com.compassuol.pb.challenge.msproducts.payload.ProductDto;
+import br.com.compassuol.pb.challenge.msproducts.payload.ProductResponse;
 
 public interface ProductService {
 
 	ProductDto createProduct(ProductDto productDto);
 	
-	List<ProductDto> getAllProducts();
+	ProductResponse getAllProducts(int page, int linesPerPage, String orderBy, String direction);
 	
 	ProductDto getProductById(long id);
 	
