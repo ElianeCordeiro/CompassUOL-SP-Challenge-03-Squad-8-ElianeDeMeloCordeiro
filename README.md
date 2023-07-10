@@ -1,2 +1,2 @@
-# CompassUOL-SP-Challenge-03-Squad-8-ElianeDeMeloCordeiro
-Final CompassUOL SP Challenge
+# Spring Boot and Microservices SP-Challenge
+Final SP Challenge with Spring Boot on Compass UOL 
