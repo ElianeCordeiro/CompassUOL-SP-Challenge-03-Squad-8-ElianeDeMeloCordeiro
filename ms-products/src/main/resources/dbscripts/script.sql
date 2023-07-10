@@ -1,10 +1,12 @@
+CREATE DATABASE msproducts;
+
 DROP TABLE IF EXISTS product;
 
 CREATE TABLE product(
 	id bigint auto_increment,
 	date date not null,
     description VARCHAR(30) not null,
-    name varchar(20) not null unique,
+    name varchar(20) not null,
     imgUrl varchar(50),
     price decimal(10,2) not null,
 

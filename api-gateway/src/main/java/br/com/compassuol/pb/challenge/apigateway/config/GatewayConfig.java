@@ -12,11 +12,12 @@ public class GatewayConfig {
 	@Bean
 	public RouteLocator gatewayRouteLocator(RouteLocatorBuilder builder) {
 		return builder.routes()
-				.route("products", p -> p
+				.route("path_products", p -> p
 						.path("/products")
-						.uri("http://localhost:8082"))
-						.build();
-				
-				
+						.uri("http://localhost:8082/"))
+				.route("path_users", p -> p
+						.path("/users")
+						.uri("http://localhost:8083/"))
+				.build();
 	}
 }

@@ -1,4 +1,5 @@
-package br.com.compassuol.pb.challenge.msproducts.payload;
+package br.com.compassuol.pb.challenge.msusers.payload;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +8,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDto {
-
+@NoArgsConstructor
+public class RoleDto {
+	
 	private Long id;
 	private String name;
 }
